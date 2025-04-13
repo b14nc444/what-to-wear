@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "849620310895",
+    "project_id": "muipzi",
+    "storage_bucket": "muipzi.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849620310895:android:648f07b1db508971faa69a",
+        "android_client_info": {
+          "package_name": "com.example.muipzi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6JORc9zEIfZ6Xy_v7-ghByc1FBSdEL7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:849620310895:android:80391fc48dad7a54faa69a",
+        "android_client_info": {
+          "package_name": "com.upzil.muipzi"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6JORc9zEIfZ6Xy_v7-ghByc1FBSdEL7c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
