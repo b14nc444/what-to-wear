@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:muipzi/assets/assets.dart';
 import 'package:muipzi/screens/splash_screen.dart';
+import 'package:muipzi/theme/app_colors.dart';
 import 'firebase_options.dart';
 
 void main() async {
@@ -17,9 +18,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: '오늘머입지',
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
-      ),
+      theme: ThemeData(scaffoldBackgroundColor: AppColors.backgroundColor),
       home: const SplashScreen(),
     );
   }
