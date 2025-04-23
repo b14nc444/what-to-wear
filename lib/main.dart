@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:muipzi/assets/assets.dart';
 import 'package:muipzi/screens/home/home_screen.dart';
-import 'package:muipzi/screens/splash_screen.dart';
 import 'package:muipzi/theme/app_colors.dart';
 import 'firebase_options.dart';
 

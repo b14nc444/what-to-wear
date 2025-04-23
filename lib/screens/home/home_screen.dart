@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:muipzi/assets/assets.dart';
-import 'package:muipzi/screens/home/main_content_card.dart';
+import 'package:muipzi/screens/home/main_content_container.dart';
 import 'package:muipzi/screens/home/weather_info_card.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
@@ -25,21 +25,14 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  AppAssets.logoImage,
-                  const Icon(
-                    Icons.settings,
-                    color: AppColors.gray700,
-                    size: 24,
-                  ),
-                ],
+                children: [AppAssets.logoImage, AppAssets.settingsIcon],
               ),
             ),
             const Padding(
               padding: EdgeInsets.symmetric(horizontal: 20),
               child: WeatherInfoCard(),
             ),
-            MainContentCard(),
+            MainContentContainer(),
           ],
         ),
       ),

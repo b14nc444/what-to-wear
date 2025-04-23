@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:muipzi/assets/assets.dart';
-import 'package:muipzi/main.dart';
 import 'package:muipzi/screens/location_permission_screen.dart';
 
 class SplashScreen extends StatelessWidget {

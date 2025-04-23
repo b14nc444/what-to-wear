@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:muipzi/assets/assets.dart';
 import 'package:muipzi/screens/home/temperature_row.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
@@ -66,7 +67,7 @@ class WeatherInfoCard extends StatelessWidget {
                 child: Row(
                   spacing: 6,
                   children: [
-                    const Icon(Icons.place_outlined, color: AppColors.gray700),
+                    AppAssets.locationIcon,
                     const Text(
                       '서울시 00구',
                       style: TextStyle(color: AppColors.gray900, fontSize: 12),
