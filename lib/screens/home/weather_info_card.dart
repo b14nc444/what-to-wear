@@ -10,24 +10,7 @@ class WeatherInfoCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: ShapeDecoration(
-        color: Colors.white,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        shadows: [
-          BoxShadow(
-            color: const Color(0x0F000000),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-            spreadRadius: -1,
-          ),
-          BoxShadow(
-            color: const Color(0x0F000000),
-            blurRadius: 4,
-            offset: const Offset(0, 2),
-            spreadRadius: -1,
-          ),
-        ],
-      ),
+      decoration: WeatherInfoCardDecoration(),
       child: Column(
         children: [
           Row(
@@ -38,9 +21,8 @@ class WeatherInfoCard extends StatelessWidget {
                   const Text(
                     '날씨',
                     style: TextStyle(
-                      color: Color(0xFF252527),
+                      color: AppColors.gray950,
                       fontSize: 16,
-                      fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w700,
                     ),
                   ),
@@ -48,9 +30,8 @@ class WeatherInfoCard extends StatelessWidget {
                   const Text(
                     '오후 12시',
                     style: TextStyle(
-                      color: Color(0xFF4D4C52),
+                      color: AppColors.gray700,
                       fontSize: 12,
-                      fontFamily: 'Pretendard',
                       fontWeight: FontWeight.w400,
                     ),
                   ),
@@ -81,6 +62,27 @@ class WeatherInfoCard extends StatelessWidget {
           const TemperatureRow(),
         ],
       ),
+    );
+  }
+
+  ShapeDecoration WeatherInfoCardDecoration() {
+    return ShapeDecoration(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shadows: [
+        BoxShadow(
+          color: const Color(0x0F000000),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+          spreadRadius: -1,
+        ),
+        BoxShadow(
+          color: const Color(0x0F000000),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+          spreadRadius: -1,
+        ),
+      ],
     );
   }
 }

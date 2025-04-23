@@ -24,7 +24,10 @@ class WhatToWearContainer extends StatelessWidget {
                   ),
                 ),
                 Expanded(
-                  child: ClothingDescription(label: '👖 하의', clothes: '청바지'),
+                  child: ClothingDescription(
+                    label: '👖 하의',
+                    clothes: '청바지, 면바지',
+                  ),
                 ),
               ],
             ),
@@ -36,28 +39,47 @@ class WhatToWearContainer extends StatelessWidget {
           children: [
             //신발
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
-                children: [
-                  ClothingDisplayBox(height: 120),
-                  ClothingDescription(label: '👟 신발', clothes: '샌들'),
-                ],
+              child: ClothingSection(
+                label: '👟 신발',
+                clothes: '샌들',
+                displayBoxHeight: 120,
               ),
             ),
             //악세사리
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                spacing: 12,
-                children: [
-                  ClothingDisplayBox(height: 120),
-                  ClothingDescription(label: '🧢 악세서리', clothes: '모자'),
-                ],
+              child: ClothingSection(
+                label: '🧢 악세서리',
+                clothes: '모자',
+                displayBoxHeight: 120,
               ),
             ),
           ],
         ),
+      ],
+    );
+  }
+}
+
+class ClothingSection extends StatelessWidget {
+  final String label;
+  final String clothes;
+  final double displayBoxHeight;
+
+  const ClothingSection({
+    super.key,
+    required this.label,
+    required this.clothes,
+    required this.displayBoxHeight,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      spacing: 12,
+      children: [
+        ClothingDisplayBox(height: displayBoxHeight),
+        ClothingDescription(label: label, clothes: clothes),
       ],
     );
   }

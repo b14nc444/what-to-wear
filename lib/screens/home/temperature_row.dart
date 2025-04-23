@@ -37,10 +37,11 @@ class TemperatureRow extends StatelessWidget {
           ],
         ),
         Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
           spacing: 8,
-          children: const [
+          children: [
             MaxMinTemperatureRow(label: '최고온도', temperature: 21),
-            MaxMinTemperatureRow(label: '최저온도', temperature: 14),
+            MaxMinTemperatureRow(label: '최저온도', temperature: 9),
           ],
         ),
       ],
@@ -64,25 +65,29 @@ class MaxMinTemperatureRow extends StatelessWidget {
       spacing: 6,
       children: [
         Text(label, style: TextStyle(color: AppColors.gray500, fontSize: 12)),
-        Row(
-          children: [
-            Text(
-              temperature.toString(),
-              style: TextStyle(
-                color: AppColors.gray950,
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
+        Container(
+          width: 40,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              Text(
+                temperature.toString(),
+                style: TextStyle(
+                  color: AppColors.gray950,
+                  fontSize: 20,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
-            ),
-            Text(
-              '°C',
-              style: TextStyle(
-                color: AppColors.gray700,
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
+              Text(
+                '°C',
+                style: TextStyle(
+                  color: AppColors.gray700,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
