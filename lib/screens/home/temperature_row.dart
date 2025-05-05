@@ -64,7 +64,14 @@ class MaxMinTemperatureRow extends StatelessWidget {
     return Row(
       spacing: 6,
       children: [
-        Text(label, style: TextStyle(color: AppColors.gray500, fontSize: 12)),
+        Text(
+          label,
+          style: TextStyle(
+            color: AppColors.gray500,
+            fontSize: 12,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
         SizedBox(
           width: 40,
           child: Row(

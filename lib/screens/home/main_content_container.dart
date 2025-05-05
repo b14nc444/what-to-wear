@@ -10,7 +10,7 @@ class MainContentContainer extends StatelessWidget {
     return Expanded(
       child: Container(
         padding: const EdgeInsets.only(top: 28, left: 20, right: 20),
-        decoration: MainContentContainerDecoration(),
+        decoration: mainContentContainerDecoration(),
         child: Column(
           spacing: 24,
           children: [
@@ -25,7 +25,7 @@ class MainContentContainer extends StatelessWidget {
     );
   }
 
-  ShapeDecoration MainContentContainerDecoration() {
+  ShapeDecoration mainContentContainerDecoration() {
     return const ShapeDecoration(
       color: Colors.white,
       shape: RoundedRectangleBorder(

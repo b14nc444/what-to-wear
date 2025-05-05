@@ -106,7 +106,11 @@ class _WeatherInfoCardState extends State<WeatherInfoCard> {
                     AppAssets.locationIcon,
                     const Text(
                       '서울시 00구',
-                      style: TextStyle(color: AppColors.gray900, fontSize: 12),
+                      style: TextStyle(
+                        color: AppColors.gray900,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w400,
+                      ),
                     ),
                   ],
                 ),
