@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -61,6 +63,9 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
       final results = await _locationService.searchLocations(query);
       print('검색 결과: ${results.length}개'); // 디버깅용 로그
 
+      // 컴포넌트가 마운트된 상태인지 확인
+      if (!mounted) return;
+
       setState(() {
         _searchResults = results;
         _isLoading = false;
@@ -69,8 +74,11 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
       print('검색 오류 발생: $e'); // 디버깅용 로그
       print('스택 트레이스: $stackTrace'); // 디버깅용 로그
 
+      // 컴포넌트가 마운트된 상태인지 확인
+      if (!mounted) return;
+
       setState(() {
-        _error = '검색 중 오류가 발생했습니다: ${e.toString()}';
+        _error = '검색 중 오류가 발생했습니다. 다시 시도해주세요.';
         _isLoading = false;
         _searchResults = [];
       });
@@ -138,6 +146,31 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                                 color: AppColors.gray700,
                                 fontSize: 14,
                               ),
+                            ),
+                          )
+                          : _searchResults.isEmpty &&
+                              _searchController.text.isNotEmpty
+                          ? const Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(
+                                  '검색 결과가 없습니다.',
+                                  style: TextStyle(
+                                    color: AppColors.gray700,
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  '다른 검색어로 다시 시도해주세요.',
+                                  style: TextStyle(
+                                    color: AppColors.gray500,
+                                    fontSize: 14,
+                                  ),
+                                ),
+                              ],
                             ),
                           )
                           : ListView.separated(

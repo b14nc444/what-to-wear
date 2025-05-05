@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_print
+
 import 'dart:async';
 import 'dart:convert';
 
@@ -83,10 +85,17 @@ class LocationService {
           return await searchFromFirestore(query);
         }
 
+        final totalCount =
+            int.tryParse(common['totalCount']?.toString() ?? '0') ?? 0;
+        if (totalCount == 0) {
+          print('검색 결과 없음 (totalCount: 0)');
+          return [];
+        }
+
         final jusoList = results['juso'] as List?;
         if (jusoList == null || jusoList.isEmpty) {
-          print('검색 결과 없음');
-          return await searchFromFirestore(query);
+          print('검색 결과 없음 (jusoList empty)');
+          return [];
         }
 
         print('API 검색 결과: ${jusoList.length}개');
@@ -180,7 +189,7 @@ class LocationService {
 
       for (final location in locations) {
         final searchKeywords =
-            [
+            {
               location.sido.toLowerCase(),
               location.sigungu.toLowerCase(),
               location.displayName.toLowerCase(),
@@ -190,7 +199,7 @@ class LocationService {
               ...location.sigungu
                   .split('')
                   .where((char) => char.trim().isNotEmpty),
-            ].toSet().toList();
+            }.toList();
 
         final data = {
           'id': location.id,
@@ -246,13 +255,13 @@ class LocationService {
 
             // 검색 키워드 생성 개선
             final searchKeywords =
-                [
+                {
                   sido.toLowerCase(),
                   sigungu.toLowerCase(),
                   displayName.toLowerCase(),
                   ...sido.split('').where((char) => char.trim().isNotEmpty),
                   ...sigungu.split('').where((char) => char.trim().isNotEmpty),
-                ].toSet().toList();
+                }.toList();
 
             final data = {
               'id': id,
