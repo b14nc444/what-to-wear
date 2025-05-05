@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
-import 'package:muipzi/assets/assets.dart';
+import 'package:muipzi/constants/assets.dart';
 import 'package:muipzi/screens/home/temperature_row.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
@@ -36,7 +36,7 @@ class _WeatherInfoCardState extends State<WeatherInfoCard> {
     final period = hour < 12 ? '오전' : '오후';
     final displayHour = hour == 12 ? 12 : hour % 12;
     setState(() {
-      _currentTime = '$period ${displayHour}시';
+      _currentTime = '$period $displayHour시';
     });
   }
 

@@ -1,7 +1,8 @@
-import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter/material.dart';
 import 'package:muipzi/screens/home/home_screen.dart';
 import 'package:muipzi/theme/app_colors.dart';
+
 import 'firebase_options.dart';
 
 void main() async {
@@ -20,6 +21,13 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         scaffoldBackgroundColor: AppColors.backgroundColor,
         fontFamily: 'Pretendard',
+        textTheme: const TextTheme(
+          bodyLarge: TextStyle(fontFamily: 'Pretendard'),
+          bodyMedium: TextStyle(fontFamily: 'Pretendard'),
+          titleLarge: TextStyle(fontFamily: 'Pretendard'),
+          titleMedium: TextStyle(fontFamily: 'Pretendard'),
+          titleSmall: TextStyle(fontFamily: 'Pretendard'),
+        ),
       ),
       home: const HomeScreen(),
     );

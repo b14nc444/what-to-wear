@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:muipzi/assets/assets.dart';
+import 'package:muipzi/constants/assets.dart';
 import 'package:muipzi/screens/home/main_content_container.dart';
 import 'package:muipzi/screens/home/weather_info_card.dart';
 
