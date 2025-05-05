@@ -103,10 +103,9 @@ class _CustomSearchBarState extends State<CustomSearchBar> {
                 focusNode: _focusNode,
                 autofocus: widget.autofocus,
                 onSubmitted: (_) => widget.onSubmitted?.call(),
-                keyboardType: TextInputType.text,
-                textInputAction: TextInputAction.search,
-                enableSuggestions: true,
-                enableIMEPersonalizedLearning: true,
+                onChanged: (value) {
+                  widget.onChanged?.call(value);
+                },
                 style: const TextStyle(
                   color: AppColors.gray900,
                   fontSize: 14,

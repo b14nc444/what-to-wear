@@ -57,15 +57,22 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     });
 
     try {
+      print('검색 시작: $query'); // 디버깅용 로그
       final results = await _locationService.searchLocations(query);
+      print('검색 결과: ${results.length}개'); // 디버깅용 로그
+
       setState(() {
         _searchResults = results;
         _isLoading = false;
       });
-    } catch (e) {
+    } catch (e, stackTrace) {
+      print('검색 오류 발생: $e'); // 디버깅용 로그
+      print('스택 트레이스: $stackTrace'); // 디버깅용 로그
+
       setState(() {
-        _error = '검색 중 오류가 발생했습니다.';
+        _error = '검색 중 오류가 발생했습니다: ${e.toString()}';
         _isLoading = false;
+        _searchResults = [];
       });
     }
   }
