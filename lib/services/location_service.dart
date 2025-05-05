@@ -25,7 +25,7 @@ class LocationService {
 
       // URL을 직접 구성하여 이중 인코딩 방지
       final uri = Uri.parse(
-        '$_baseUrl?confmKey=$_apiKey&currentPage=1&countPerPage=20&keyword=$query&resultType=json',
+        '$_baseUrl?confmKey=$_apiKey&currentPage=1&countPerPage=100&keyword=$query&resultType=json',
       );
       print('API 요청 URL: ${uri.toString()}');
 
@@ -41,7 +41,6 @@ class LocationService {
             );
 
         print('API 응답 상태 코드: ${response.statusCode}');
-        print('API 응답 헤더: ${response.headers}');
 
         if (response.statusCode != 200) {
           print('API 응답 실패: ${response.statusCode}');
@@ -55,8 +54,6 @@ class LocationService {
           print('응답 디코딩 오류: $e');
           return await searchFromFirestore(query);
         }
-
-        print('API 응답 본문: $responseBody');
 
         Map<String, dynamic> data;
         try {
@@ -93,17 +90,36 @@ class LocationService {
         }
 
         print('API 검색 결과: ${jusoList.length}개');
-        return jusoList.map((juso) {
+
+        // 시도와 시군구 정보만 추출하여 중복 제거
+        final uniqueLocations = <String, Location>{};
+
+        for (final juso in jusoList) {
           final siNm = juso['siNm']?.toString() ?? '';
           final sggNm = juso['sggNm']?.toString() ?? '';
 
-          return Location(
-            id: '$siNm-$sggNm',
+          // 시도나 시군구 정보가 없는 경우 건너뛰기
+          if (siNm.isEmpty || sggNm.isEmpty) continue;
+
+          final locationKey = '$siNm-$sggNm';
+
+          // 이미 처리된 시군구는 건너뛰기
+          if (uniqueLocations.containsKey(locationKey)) continue;
+
+          uniqueLocations[locationKey] = Location(
+            id: locationKey,
             sido: siNm,
             sigungu: sggNm,
             displayName: '$siNm $sggNm',
           );
-        }).toList();
+        }
+
+        final filteredResults =
+            uniqueLocations.values.toList()
+              ..sort((a, b) => a.displayName.compareTo(b.displayName));
+
+        print('중복 제거 후 결과: ${filteredResults.length}개');
+        return filteredResults;
       } catch (e) {
         print('API 요청 실패: $e');
         return await searchFromFirestore(query);
