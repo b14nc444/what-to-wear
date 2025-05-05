@@ -23,7 +23,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
   List<Location> _searchResults = [];
   bool _isLoading = false;
   String? _error;
-  int? _selectedIndex;
+  Location? _selectedLocation;
 
   @override
   void dispose() {
@@ -71,6 +71,13 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
         _searchResults = results;
         _isLoading = false;
       });
+      // 유지된 선택이 새 결과에 없으면 초기화
+      if (_selectedLocation != null &&
+          !_searchResults.contains(_selectedLocation)) {
+        setState(() {
+          _selectedLocation = null;
+        });
+      }
     } catch (e, stackTrace) {
       print('검색 오류 발생: $e'); // 디버깅용 로그
       print('스택 트레이스: $stackTrace'); // 디버깅용 로그
@@ -88,7 +95,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
 
   void _onLocationSelected(Location location, int index) {
     setState(() {
-      _selectedIndex = index;
+      _selectedLocation = location;
     });
   }
 
@@ -182,18 +189,11 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                                 (context, index) => const SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final location = _searchResults[index];
-                              return GestureDetector(
+                              return LocationSearchItem(
+                                location: location.displayName,
+                                selected: _selectedLocation?.id == location.id,
                                 onTap:
                                     () => _onLocationSelected(location, index),
-                                child: Container(
-                                  color:
-                                      _selectedIndex == index
-                                          ? AppColors.gray100
-                                          : Colors.transparent,
-                                  child: LocationSearchItem(
-                                    location: location.displayName,
-                                  ),
-                                ),
                               );
                             },
                           ),
@@ -207,15 +207,18 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
           child: ElevatedButton(
             style: ElevatedButton.styleFrom(
               backgroundColor:
-                  _selectedIndex != null
+                  _selectedLocation != null
                       ? AppColors.mint700
                       : AppColors.gray100,
               foregroundColor:
-                  _selectedIndex != null ? Colors.white : AppColors.gray300,
+                  _selectedLocation != null ? Colors.white : AppColors.gray300,
               minimumSize: const Size.fromHeight(50),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
             ),
             onPressed:
-                _selectedIndex != null
+                _selectedLocation != null
                     ? () {
                       //TODO: 클릭하면 동작
                     }
