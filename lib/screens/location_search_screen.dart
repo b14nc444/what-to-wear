@@ -4,6 +4,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:muipzi/models/location.dart';
+import 'package:muipzi/screens/home/home_screen.dart';
 import 'package:muipzi/services/location_service.dart';
 import 'package:muipzi/theme/app_colors.dart';
 import 'package:muipzi/widgets/custom_search_bar.dart';
@@ -220,7 +221,12 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
             onPressed:
                 _selectedLocation != null
                     ? () {
-                      //TODO: 클릭하면 동작
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
                     }
                     : null,
             child: const Text(
