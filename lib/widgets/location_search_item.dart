@@ -3,18 +3,18 @@ import 'package:muipzi/theme/app_colors.dart';
 
 class LocationSearchItem extends StatelessWidget {
   final String location;
-  final VoidCallback onTap;
+  // final VoidCallback onTap;
 
   const LocationSearchItem({
     super.key,
     required this.location,
-    required this.onTap,
+    //required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: onTap,
+      //      onTap: onTap,
       child: Container(
         width: double.infinity,
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),

@@ -23,6 +23,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
   List<Location> _searchResults = [];
   bool _isLoading = false;
   String? _error;
+  int? _selectedIndex;
 
   @override
   void dispose() {
@@ -85,8 +86,10 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     }
   }
 
-  void _onLocationSelected(Location location) {
-    Navigator.pop(context, location);
+  void _onLocationSelected(Location location, int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
   }
 
   @override
@@ -179,14 +182,51 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                                 (context, index) => const SizedBox(height: 8),
                             itemBuilder: (context, index) {
                               final location = _searchResults[index];
-                              return LocationSearchItem(
-                                location: location.displayName,
-                                onTap: () => _onLocationSelected(location),
+                              return GestureDetector(
+                                onTap:
+                                    () => _onLocationSelected(location, index),
+                                child: Container(
+                                  color:
+                                      _selectedIndex == index
+                                          ? AppColors.gray100
+                                          : Colors.transparent,
+                                  child: LocationSearchItem(
+                                    location: location.displayName,
+                                  ),
+                                ),
                               );
                             },
                           ),
                 ),
               ],
+            ),
+          ),
+        ),
+        bottomNavigationBar: Padding(
+          padding: const EdgeInsets.all(20),
+          child: ElevatedButton(
+            style: ElevatedButton.styleFrom(
+              backgroundColor:
+                  _selectedIndex != null
+                      ? AppColors.mint700
+                      : AppColors.gray100,
+              foregroundColor:
+                  _selectedIndex != null ? Colors.white : AppColors.gray300,
+              minimumSize: const Size.fromHeight(50),
+            ),
+            onPressed:
+                _selectedIndex != null
+                    ? () {
+                      //TODO: 클릭하면 동작
+                    }
+                    : null,
+            child: const Text(
+              '완료',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+              ),
             ),
           ),
         ),
