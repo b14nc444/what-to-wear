@@ -1,16 +1,71 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:muipzi/assets/assets.dart';
 import 'package:muipzi/screens/home/temperature_row.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
-class WeatherInfoCard extends StatelessWidget {
+class WeatherInfoCard extends StatefulWidget {
   const WeatherInfoCard({super.key});
+
+  @override
+  State<WeatherInfoCard> createState() => _WeatherInfoCardState();
+}
+
+class _WeatherInfoCardState extends State<WeatherInfoCard> {
+  Timer? _timer;
+  String _currentTime = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _updateTime();
+    // 1분마다 시간 업데이트
+    _timer = Timer.periodic(const Duration(minutes: 1), (_) => _updateTime());
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+  void _updateTime() {
+    final now = DateTime.now();
+    final hour = now.hour;
+    final period = hour < 12 ? '오전' : '오후';
+    final displayHour = hour == 12 ? 12 : hour % 12;
+    setState(() {
+      _currentTime = '$period ${displayHour}시';
+    });
+  }
+
+  ShapeDecoration weatherInfoCardDecoration() {
+    return ShapeDecoration(
+      color: Colors.white,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      shadows: [
+        BoxShadow(
+          color: const Color(0x0F000000),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+          spreadRadius: -1,
+        ),
+        BoxShadow(
+          color: const Color(0x0F000000),
+          blurRadius: 4,
+          offset: const Offset(0, 2),
+          spreadRadius: -1,
+        ),
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      decoration: WeatherInfoCardDecoration(),
+      decoration: weatherInfoCardDecoration(),
       child: Column(
         children: [
           Row(
@@ -27,9 +82,9 @@ class WeatherInfoCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  const Text(
-                    '오후 12시',
-                    style: TextStyle(
+                  Text(
+                    _currentTime,
+                    style: const TextStyle(
                       color: AppColors.gray700,
                       fontSize: 12,
                       fontWeight: FontWeight.w400,
@@ -62,27 +117,6 @@ class WeatherInfoCard extends StatelessWidget {
           const TemperatureRow(),
         ],
       ),
-    );
-  }
-
-  ShapeDecoration WeatherInfoCardDecoration() {
-    return ShapeDecoration(
-      color: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      shadows: [
-        BoxShadow(
-          color: const Color(0x0F000000),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-          spreadRadius: -1,
-        ),
-        BoxShadow(
-          color: const Color(0x0F000000),
-          blurRadius: 4,
-          offset: const Offset(0, 2),
-          spreadRadius: -1,
-        ),
-      ],
     );
   }
 }

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:muipzi/assets/assets.dart';
 import 'package:muipzi/screens/home/main_content_container.dart';
 import 'package:muipzi/screens/home/weather_info_card.dart';
-import 'package:muipzi/theme/app_colors.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -28,8 +27,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [AppAssets.logoImage, AppAssets.settingsIcon],
               ),
             ),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 20),
               child: WeatherInfoCard(),
             ),
             MainContentContainer(),
