@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:muipzi/models/location.dart';
+import 'package:muipzi/services/location_service.dart';
 import 'package:muipzi/theme/app_colors.dart';
 import 'package:muipzi/widgets/custom_search_bar.dart';
 import 'package:muipzi/widgets/location_search_item.dart';
@@ -14,9 +16,11 @@ class LocationSearchScreen extends StatefulWidget {
 
 class _LocationSearchScreenState extends State<LocationSearchScreen> {
   final TextEditingController _searchController = TextEditingController();
+  final LocationService _locationService = LocationService();
   Timer? _debounce;
-  List<String> _searchResults = [];
+  List<Location> _searchResults = [];
   bool _isLoading = false;
+  String? _error;
 
   @override
   void dispose() {
@@ -37,38 +41,36 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     });
   }
 
-  void _performSearch(String query) {
+  Future<void> _performSearch(String query) async {
     if (query.isEmpty) {
       setState(() {
         _searchResults = [];
         _isLoading = false;
+        _error = null;
       });
       return;
     }
 
     setState(() {
       _isLoading = true;
+      _error = null;
     });
 
-    // TODO: 실제 API 호출로 대체
-    // 임시 검색 결과
-    Future.delayed(const Duration(seconds: 1), () {
+    try {
+      final results = await _locationService.searchLocations(query);
       setState(() {
-        _searchResults =
-            ['서울 중구', '서울 강남구', '서울 서초구', '서울 송파구']
-                .where(
-                  (location) =>
-                      location.toLowerCase().contains(query.toLowerCase()),
-                )
-                .toList();
+        _searchResults = results;
         _isLoading = false;
       });
-    });
+    } catch (e) {
+      setState(() {
+        _error = '검색 중 오류가 발생했습니다.';
+        _isLoading = false;
+      });
+    }
   }
 
-  void _onLocationSelected(String location) {
-    // TODO: 선택된 위치 처리
-    print('Selected location: $location');
+  void _onLocationSelected(Location location) {
     Navigator.pop(context, location);
   }
 
@@ -121,6 +123,16 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                               color: AppColors.gray900,
                             ),
                           )
+                          : _error != null
+                          ? Center(
+                            child: Text(
+                              _error!,
+                              style: const TextStyle(
+                                color: AppColors.gray700,
+                                fontSize: 14,
+                              ),
+                            ),
+                          )
                           : ListView.separated(
                             itemCount: _searchResults.length,
                             separatorBuilder:
@@ -128,7 +140,7 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
                             itemBuilder: (context, index) {
                               final location = _searchResults[index];
                               return LocationSearchItem(
-                                location: location,
+                                location: location.displayName,
                                 onTap: () => _onLocationSelected(location),
                               );
                             },
