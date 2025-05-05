@@ -143,40 +143,70 @@ class LocationService {
   // Firestore에서 검색하는 함수
   Future<List<Location>> searchFromFirestore(String query) async {
     try {
-      final lowercaseQuery = query.toLowerCase();
+      print('Firestore 검색 시작: $query');
+      final lowercaseQuery = query.toLowerCase().trim();
 
-      // 먼저 정확한 키워드 매칭 시도
-      var snapshot =
-          await _firestore
-              .collection('locations')
-              .where('searchKeywords', arrayContains: lowercaseQuery)
-              .orderBy('displayName')
-              .limit(20)
-              .get();
-
-      if (snapshot.docs.isEmpty) {
-        // 정확한 매치가 없을 경우 부분 검색 시도
-        snapshot =
-            await _firestore
-                .collection('locations')
-                .orderBy('displayName')
-                .get();
-
-        return snapshot.docs
-            .map((doc) => Location.fromJson(doc.data()))
-            .where(
-              (location) =>
-                  location.displayName.toLowerCase().contains(lowercaseQuery) ||
-                  location.sido.toLowerCase().contains(lowercaseQuery) ||
-                  location.sigungu.toLowerCase().contains(lowercaseQuery),
-            )
-            .take(20)
-            .toList();
+      if (lowercaseQuery.isEmpty) {
+        print('검색어가 비어있음');
+        return [];
       }
 
-      return snapshot.docs.map((doc) => Location.fromJson(doc.data())).toList();
-    } catch (e) {
-      print('Error searching from Firestore: $e');
+      print('Firestore 쿼리 시작: searchKeywords contains "$lowercaseQuery"');
+
+      // 전체 문서를 가져와서 클라이언트에서 필터링
+      final snapshot =
+          await _firestore.collection('locations').orderBy('displayName').get();
+
+      print('Firestore 전체 문서 수: ${snapshot.docs.length}개');
+
+      final List<Location> results = [];
+      final Set<String> addedIds = {};
+
+      // 검색어로 시작하는 결과 먼저 찾기
+      for (final doc in snapshot.docs) {
+        final data = doc.data();
+        final location = Location.fromJson(data);
+
+        // searchKeywords 디버깅
+        final searchKeywords =
+            (data['searchKeywords'] as List<dynamic>?)?.cast<String>() ?? [];
+        print('문서 ID: ${doc.id}, 키워드: $searchKeywords');
+
+        if (location.displayName.toLowerCase().contains(lowercaseQuery) ||
+            location.sido.toLowerCase().contains(lowercaseQuery) ||
+            location.sigungu.toLowerCase().contains(lowercaseQuery)) {
+          if (!addedIds.contains(location.id)) {
+            results.add(location);
+            addedIds.add(location.id);
+          }
+        }
+      }
+
+      // 정렬: 정확한 매칭 결과가 앞으로 오도록
+      results.sort((a, b) {
+        final aStartsWith = a.displayName.toLowerCase().startsWith(
+          lowercaseQuery,
+        );
+        final bStartsWith = b.displayName.toLowerCase().startsWith(
+          lowercaseQuery,
+        );
+
+        if (aStartsWith && !bStartsWith) return -1;
+        if (!aStartsWith && bStartsWith) return 1;
+
+        return a.displayName.compareTo(b.displayName);
+      });
+
+      // 결과 개수 제한
+      final limitedResults = results.take(20).toList();
+
+      print('검색 결과: ${limitedResults.length}개');
+      print('검색된 지역: ${limitedResults.map((e) => e.displayName).join(', ')}');
+
+      return limitedResults;
+    } catch (e, stackTrace) {
+      print('Firestore 검색 오류: $e');
+      print('스택 트레이스: $stackTrace');
       return [];
     }
   }
@@ -188,17 +218,18 @@ class LocationService {
       final locationsRef = _firestore.collection('locations');
 
       for (final location in locations) {
+        // 검색 키워드 생성 개선
         final searchKeywords =
-            {
+            <String>{
               location.sido.toLowerCase(),
               location.sigungu.toLowerCase(),
               location.displayName.toLowerCase(),
-              ...location.sido
-                  .split('')
-                  .where((char) => char.trim().isNotEmpty),
-              ...location.sigungu
-                  .split('')
-                  .where((char) => char.trim().isNotEmpty),
+              // 초성 추출
+              ...location.sido.split(''),
+              ...location.sigungu.split(''),
+              // 부분 문자열 추가
+              ...generatePartialStrings(location.sido),
+              ...generatePartialStrings(location.sigungu),
             }.toList();
 
         final data = {
@@ -209,16 +240,32 @@ class LocationService {
           'searchKeywords': searchKeywords,
         };
 
+        print('저장할 데이터: $data');
         final docRef = locationsRef.doc(location.id);
         batch.set(docRef, data, SetOptions(merge: true));
       }
 
       await batch.commit();
-      print('Successfully stored locations in Firestore');
-    } catch (e) {
-      print('Error storing locations: $e');
+      print('Firestore에 위치 데이터 저장 완료');
+    } catch (e, stackTrace) {
+      print('위치 데이터 저장 오류: $e');
+      print('스택 트레이스: $stackTrace');
       rethrow;
     }
+  }
+
+  // 부분 문자열 생성 함수
+  List<String> generatePartialStrings(String text) {
+    final Set<String> partials = {};
+    final normalized = text.toLowerCase();
+
+    for (int i = 0; i < normalized.length; i++) {
+      for (int j = i + 1; j <= normalized.length; j++) {
+        partials.add(normalized.substring(i, j));
+      }
+    }
+
+    return partials.toList();
   }
 
   Future<void> fetchAndStoreLocations() async {
@@ -285,33 +332,27 @@ class LocationService {
     }
   }
 
-  // 임시 데이터 설정 (테스트용)
+  // 데이터 초기화
   Future<void> initializeLocationData() async {
-    final batch = _firestore.batch();
-    final locationsRef = _firestore.collection('locations');
+    try {
+      print('기존 데이터 삭제 시작');
+      // 기존 데이터 삭제
+      final snapshot = await _firestore.collection('locations').get();
+      final batch = _firestore.batch();
+      for (final doc in snapshot.docs) {
+        batch.delete(doc.reference);
+      }
+      await batch.commit();
+      print('기존 데이터 삭제 완료');
 
-    final locations = [
-      {
-        'id': 'seoul-jongno',
-        'sido': '서울특별시',
-        'sigungu': '종로구',
-        'displayName': '서울특별시 종로구',
-        'searchKeywords': ['서울특별시', '종로구', '서울특별시 종로구'],
-      },
-      {
-        'id': 'seoul-jung',
-        'sido': '서울특별시',
-        'sigungu': '중구',
-        'displayName': '서울특별시 중구',
-        'searchKeywords': ['서울특별시', '중구', '서울특별시 중구'],
-      },
-    ];
-
-    for (final location in locations) {
-      final docRef = locationsRef.doc(location['id'] as String);
-      batch.set(docRef, location);
+      // API에서 실제 데이터 가져오기
+      print('API에서 데이터 가져오기 시작');
+      await fetchAndStoreLocations();
+      print('데이터 초기화 완료');
+    } catch (e, stackTrace) {
+      print('데이터 초기화 오류: $e');
+      print('스택 트레이스: $stackTrace');
+      rethrow;
     }
-
-    await batch.commit();
   }
 }

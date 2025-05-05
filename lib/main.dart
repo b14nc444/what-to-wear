@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:muipzi/screens/location_permission_screen.dart';
+import 'package:muipzi/services/location_service.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
 import 'firebase_options.dart';
@@ -8,6 +9,10 @@ import 'firebase_options.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // 임시 초기화 실행
+  await LocationService().initializeLocationData();
+
   runApp(const MyApp());
 }
 
