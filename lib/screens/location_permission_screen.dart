@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:muipzi/constants/assets.dart';
+import 'package:muipzi/screens/location_search_screen.dart';
 import 'package:muipzi/theme/app_colors.dart';
 
 class LocationPermissionScreen extends StatelessWidget {
@@ -35,14 +36,20 @@ class LocationPermissionScreen extends StatelessWidget {
                       OptionBox(
                         '위치 권한 허용하기',
                         onTap: () {
-                          print('Tapped!');
+                          // print('Tapped!');
                         },
                       ),
                       const SizedBox(height: 8),
                       OptionBox(
                         '수동으로 위치 설정하기',
                         onTap: () {
-                          print('Tapped');
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder:
+                                  (context) => const LocationSearchScreen(),
+                            ),
+                          );
                         },
                       ),
                     ],
