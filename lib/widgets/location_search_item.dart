@@ -24,25 +24,13 @@ class LocationSearchItem extends StatelessWidget {
           color: selected ? AppColors.gray100 : Colors.transparent,
           borderRadius: BorderRadius.circular(12),
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  Flexible(
-                    child: Text(
-                      location,
-                      style: const TextStyle(
-                        color: AppColors.gray900,
-                        fontSize: 14,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+        child: Text(
+          location,
+          style: const TextStyle(
+            color: AppColors.gray900,
+            fontSize: 14,
+            fontWeight: FontWeight.w500,
+          ),
         ),
       ),
     );

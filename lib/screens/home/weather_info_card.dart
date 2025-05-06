@@ -115,7 +115,7 @@ class _WeatherInfoCardState extends State<WeatherInfoCard> {
                   children: [
                     AppAssets.locationIcon,
                     Text(
-                      _locationName ?? '',
+                      _locationName ?? '', //TODO: 선택한 지역 없을 경우 기본값 설정 필요
                       style: const TextStyle(
                         color: AppColors.gray900,
                         fontSize: 12,

@@ -101,6 +101,130 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
     });
   }
 
+  Widget _buildSearchBar() {
+    return Row(
+      children: [
+        Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(8),
+            onTap: () => Navigator.pop(context),
+            child: const Padding(
+              padding: EdgeInsets.all(4),
+              child: Icon(
+                Icons.arrow_back_ios,
+                color: AppColors.gray700,
+                size: 28,
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
+        Expanded(
+          child: CustomSearchBar(
+            controller: _searchController,
+            autofocus: true,
+            onChanged: _onSearchChanged,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildSearchResults() {
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(color: AppColors.gray900),
+      );
+    } else if (_error != null) {
+      return Center(
+        child: Text(
+          _error!,
+          style: const TextStyle(color: AppColors.gray700, fontSize: 14),
+        ),
+      );
+    } else if (_searchResults.isEmpty && _searchController.text.isNotEmpty) {
+      return const Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              '검색 결과가 없습니다.',
+              style: TextStyle(
+                color: AppColors.gray700,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            SizedBox(height: 8),
+            Text(
+              '다른 검색어로 다시 시도해주세요.',
+              style: TextStyle(color: AppColors.gray500, fontSize: 14),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return ListView.separated(
+        itemCount: _searchResults.length,
+        separatorBuilder: (context, index) => const SizedBox(height: 8),
+        itemBuilder: (context, index) {
+          final location = _searchResults[index];
+          return LocationSearchItem(
+            location: location.displayName,
+            selected: _selectedLocation?.id == location.id,
+            onTap: () => _onLocationSelected(location, index),
+          );
+        },
+      );
+    }
+  }
+
+  Widget _buildBottomButton() {
+    return Padding(
+      padding: const EdgeInsets.all(20),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          backgroundColor:
+              _selectedLocation != null ? AppColors.mint700 : AppColors.gray100,
+          foregroundColor:
+              _selectedLocation != null ? Colors.white : AppColors.gray300,
+          minimumSize: const Size.fromHeight(50),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+        ),
+        onPressed:
+            _selectedLocation != null
+                ? () async {
+                  final prefs = await SharedPreferences.getInstance();
+                  await prefs.setString(
+                    'selected_location_id',
+                    _selectedLocation!.id,
+                  );
+                  await prefs.setString(
+                    'selected_location_name',
+                    _selectedLocation!.displayName,
+                  );
+
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(builder: (context) => const HomeScreen()),
+                  );
+                }
+                : null,
+        child: const Text(
+          '완료',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
@@ -112,144 +236,14 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
             child: Column(
               children: [
                 const SizedBox(height: 20),
-                //검색
-                Row(
-                  children: [
-                    Material(
-                      color: Colors.transparent,
-                      child: InkWell(
-                        borderRadius: BorderRadius.circular(8),
-                        onTap: () => Navigator.pop(context),
-                        child: const Padding(
-                          padding: EdgeInsets.all(4),
-                          child: Icon(
-                            Icons.arrow_back_ios,
-                            color: AppColors.gray700,
-                            size: 28,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: CustomSearchBar(
-                        controller: _searchController,
-                        autofocus: true,
-                        onChanged: _onSearchChanged,
-                      ),
-                    ),
-                  ],
-                ),
+                _buildSearchBar(),
                 const SizedBox(height: 12),
-                //검색결과
-                Expanded(
-                  child:
-                      _isLoading
-                          ? const Center(
-                            child: CircularProgressIndicator(
-                              color: AppColors.gray900,
-                            ),
-                          )
-                          : _error != null
-                          ? Center(
-                            child: Text(
-                              _error!,
-                              style: const TextStyle(
-                                color: AppColors.gray700,
-                                fontSize: 14,
-                              ),
-                            ),
-                          )
-                          : _searchResults.isEmpty &&
-                              _searchController.text.isNotEmpty
-                          ? const Center(
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                Text(
-                                  '검색 결과가 없습니다.',
-                                  style: TextStyle(
-                                    color: AppColors.gray700,
-                                    fontSize: 16,
-                                    fontWeight: FontWeight.w500,
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  '다른 검색어로 다시 시도해주세요.',
-                                  style: TextStyle(
-                                    color: AppColors.gray500,
-                                    fontSize: 14,
-                                  ),
-                                ),
-                              ],
-                            ),
-                          )
-                          : ListView.separated(
-                            itemCount: _searchResults.length,
-                            separatorBuilder:
-                                (context, index) => const SizedBox(height: 8),
-                            itemBuilder: (context, index) {
-                              final location = _searchResults[index];
-                              return LocationSearchItem(
-                                location: location.displayName,
-                                selected: _selectedLocation?.id == location.id,
-                                onTap:
-                                    () => _onLocationSelected(location, index),
-                              );
-                            },
-                          ),
-                ),
+                Expanded(child: _buildSearchResults()),
               ],
             ),
           ),
         ),
-        bottomNavigationBar: Padding(
-          padding: const EdgeInsets.all(20),
-          child: ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor:
-                  _selectedLocation != null
-                      ? AppColors.mint700
-                      : AppColors.gray100,
-              foregroundColor:
-                  _selectedLocation != null ? Colors.white : AppColors.gray300,
-              minimumSize: const Size.fromHeight(50),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            onPressed:
-                _selectedLocation != null
-                    ? () async {
-                      final prefs = await SharedPreferences.getInstance();
-                      await prefs.setString(
-                        'selected_location_id',
-                        _selectedLocation!.id,
-                      );
-                      await prefs.setString(
-                        'selected_location_name',
-                        _selectedLocation!.displayName,
-                      );
-
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const HomeScreen(),
-                        ),
-                      );
-                    }
-                    : null,
-            child: const Text(
-              '완료',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 16,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-        ),
+        bottomNavigationBar: _buildBottomButton(),
       ),
     );
   }
