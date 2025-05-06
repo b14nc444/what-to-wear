@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:muipzi/constants/assets.dart';
 import 'package:muipzi/screens/home/temperature_row.dart';
 import 'package:muipzi/theme/app_colors.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class WeatherInfoCard extends StatefulWidget {
   const WeatherInfoCard({super.key});
@@ -15,13 +16,22 @@ class WeatherInfoCard extends StatefulWidget {
 class _WeatherInfoCardState extends State<WeatherInfoCard> {
   Timer? _timer;
   String _currentTime = '';
+  String? _locationName;
 
   @override
   void initState() {
     super.initState();
     _updateTime();
+    _loadLocationName();
     // 1분마다 시간 업데이트
     _timer = Timer.periodic(const Duration(minutes: 1), (_) => _updateTime());
+  }
+
+  Future<void> _loadLocationName() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      _locationName = prefs.getString('selected_location_name') ?? '지역 없음';
+    });
   }
 
   @override
@@ -104,9 +114,9 @@ class _WeatherInfoCardState extends State<WeatherInfoCard> {
                   spacing: 6,
                   children: [
                     AppAssets.locationIcon,
-                    const Text(
-                      '서울시 00구',
-                      style: TextStyle(
+                    Text(
+                      _locationName ?? '',
+                      style: const TextStyle(
                         color: AppColors.gray900,
                         fontSize: 12,
                         fontWeight: FontWeight.w400,

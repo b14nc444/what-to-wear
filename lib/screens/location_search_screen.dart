@@ -9,6 +9,7 @@ import 'package:muipzi/services/location_service.dart';
 import 'package:muipzi/theme/app_colors.dart';
 import 'package:muipzi/widgets/custom_search_bar.dart';
 import 'package:muipzi/widgets/location_search_item.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LocationSearchScreen extends StatefulWidget {
   const LocationSearchScreen({super.key});
@@ -220,7 +221,17 @@ class _LocationSearchScreenState extends State<LocationSearchScreen> {
             ),
             onPressed:
                 _selectedLocation != null
-                    ? () {
+                    ? () async {
+                      final prefs = await SharedPreferences.getInstance();
+                      await prefs.setString(
+                        'selected_location_id',
+                        _selectedLocation!.id,
+                      );
+                      await prefs.setString(
+                        'selected_location_name',
+                        _selectedLocation!.displayName,
+                      );
+
                       Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(
